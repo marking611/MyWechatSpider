@@ -1,15 +1,6 @@
 package com.mak.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by Administrator on 2017/7/23 0023.

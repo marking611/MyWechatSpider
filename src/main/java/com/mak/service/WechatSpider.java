@@ -33,8 +33,10 @@ public class WechatSpider {
         for (String wechatId : wechatIdArray) {
             LOGGER.info("开始抓取" + wechatId);
 //            spider(wechatId);
+            long begin = System.currentTimeMillis();
             mySpider(wechatId);
-            LOGGER.info("抓取" + wechatId + "结束");
+            long end = System.currentTimeMillis();
+            LOGGER.info("抓取" + wechatId + "结束，用时："+(end-begin));
         }
     }
 

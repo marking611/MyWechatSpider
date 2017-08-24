@@ -211,7 +211,6 @@ public class WechatUtil {
         if (null == doc) {
             return null;
         }
-        String title = doc.select("#activity-name").first().text();
         Elements imagesDom = doc.select("#js_content img[data-src]");
         String contentTxt = doc.select("#js_content").first().html();
 //        String date = doc.select("#post-date").first().text();
@@ -224,8 +223,6 @@ public class WechatUtil {
             content.setImg(images.size() > 0 ? images.get(0) : null);
         content.setContent(contentTxt);
         content.setContentMD5(MD5Util.md5(contentTxt));
-        if (StringUtils.isBlank(content.getTitle()))
-            content.setTitle(title);
         if (StringUtils.isBlank(content.getUser()))
             content.setUser(user);
         return content;

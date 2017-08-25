@@ -97,7 +97,8 @@ public class WechatUtil {
                     .header("Cookie",
                             "ABTEST=8|1430710665|v1; SUID=F55370722708930A000000005546E989; PHPSESSID=0hk2d8cl4128niajvb4f4asfq6; SUIR=1430710665; SUID=F55370724FC80D0A000000005546E989; SNUID=D47250532024351871AD39CB21F3D59C; SUV=00EA70CE727053F55546F1207367B700; weixinIndexVisited=1; wuid=AAGjZr7TCQAAAAqUKHWrjwEAkwA=; ld=nAVZ9yllll2qSs4glllllVqpDNtllllltXxFdyllll9lllllxllll5@@@@@@@@@@; usid=pz2gIdtBRiERY8lB; sct=2; wapsogou_qq_nickname=; IPLOC=CN3200")
                     .get();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.err.println(url);
             e.printStackTrace();
             return null;
         }
@@ -212,7 +213,13 @@ public class WechatUtil {
             return null;
         }
         Elements imagesDom = doc.select("#js_content img[data-src]");
-        String contentTxt = doc.select("#js_content").first().html();
+        String contentTxt = null;
+        try {
+            contentTxt = doc.select("#js_content").first().html();
+        } catch (Exception e) {
+            System.err.println(url);
+            e.printStackTrace();
+        }
 //        String date = doc.select("#post-date").first().text();
         String user = doc.select("#post-user").first().text();
         List<String> images = new ArrayList<>();
@@ -232,7 +239,7 @@ public class WechatUtil {
     /**
      * 获取指定页的全部话题
      *
-     * @param limit
+     * @param
      * @return
      */
     public static List<String> getTopicUrls(String url) {
@@ -282,7 +289,8 @@ public class WechatUtil {
                         if (wechatInfo == null) continue;
                         Content content = new Content();
                         content.setUser(wechatInfo.getString("author"));
-                        String contentUrl = "http://mp.weixin.qq.com" + wechatInfo.getString("content_url").replaceAll("amp;", "");
+                        String contentUrl = wechatInfo.getString("content_url").replaceAll("amp;", "");
+                        contentUrl = StringUtils.isBlank(contentUrl) || contentUrl.startsWith("http")? contentUrl:"http://mp.weixin.qq.com"+contentUrl;
                         content.setUrl(contentUrl);
                         content.setTitle(wechatInfo.getString("title"));
                         content.setImg(wechatInfo.getString("cover"));
@@ -294,7 +302,8 @@ public class WechatUtil {
                             content.setDate(DateUtil.format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss"));
                             content.setPt(DateUtil.format(new Date(dateTime), "yyyy-MM-dd"));
                         }
-                        result.put(contentUrl, content);
+                        if (StringUtils.isNotBlank(contentUrl))
+                            result.put(contentUrl, content);
                         JSONArray multi_app_msg_item_list = wechatInfo.getJSONArray("multi_app_msg_item_list");
                         if (multi_app_msg_item_list == null) continue;
                         for (int j = 0; j < multi_app_msg_item_list.size(); j++) {
@@ -302,7 +311,8 @@ public class WechatUtil {
                             if (multiWechatInfo == null) continue;
                             Content multiContent = new Content();
                             multiContent.setUser(multiWechatInfo.getString("author"));
-                            String multiContentUrl = "http://mp.weixin.qq.com" + multiWechatInfo.getString("content_url").replaceAll("amp;", "");
+                            String multiContentUrl = multiWechatInfo.getString("content_url").replaceAll("amp;", "");
+                            multiContentUrl = multiContentUrl.startsWith("http")?multiContentUrl:"http://mp.weixin.qq.com" + multiContentUrl;
                             multiContent.setUrl(multiContentUrl);
                             multiContent.setTitle(multiWechatInfo.getString("title"));
                             multiContent.setImg(multiWechatInfo.getString("cover"));
